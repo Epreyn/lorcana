@@ -1,8 +1,9 @@
+// lib/app/services/lorcana_api_services.dart
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import '../data/models/card_model.dart';
 import '../data/models/price_model.dart';
+import 'lorcana_api_adapter.dart';
 
 class LorcanaApiService {
   static const String baseUrl = 'https://api.lorcana-api.com';
@@ -128,129 +129,5 @@ class LorcanaApiService {
       print('Erreur lors de la récupération des sets: $e');
       return [];
     }
-  }
-}
-
-// Adaptateur pour convertir les données de l'API vers notre modèle
-class LorcanaApiAdapter {
-  static CardModel fromApiResponse(
-    Map<String, dynamic> apiData, {
-    List<PriceModel>? prices,
-  }) {
-    // Debug : afficher les clés disponibles
-    if (apiData.isNotEmpty) {
-      print('Clés disponibles dans apiData: ${apiData.keys.toList()}');
-    }
-
-    // Extraire l'ID de différentes façons possibles
-    final id =
-        (apiData['id'] ??
-                apiData['unique_id'] ??
-                apiData['card_id'] ??
-                apiData['number'] ??
-                DateTime.now().millisecondsSinceEpoch)
-            .toString();
-
-    // Nom - la clé est "Name"
-    String name = apiData['Name'] ?? apiData['name'] ?? 'Carte inconnue';
-
-    // URL de l'image - la clé est "Image"
-    String imageUrl = apiData['Image'] ?? apiData['image'] ?? '';
-    if (imageUrl.isEmpty) {
-      imageUrl =
-          'https://via.placeholder.com/300x420/E3F2FD/1976D2?text=Lorcana';
-    }
-
-    // Rareté - la clé est "Rarity"
-    String rarity =
-        (apiData['Rarity'] ?? apiData['rarity'] ?? 'Common').toString();
-    rarity = _normalizeRarity(rarity);
-
-    // Set - la clé est "Set_ID"
-    String set =
-        apiData['Set_ID'] ?? apiData['Set_Name'] ?? apiData['set'] ?? 'Unknown';
-    set = _normalizeSetCode(set);
-
-    // Coût en encre - la clé est "Cost"
-    final inkCost = _extractNumber(apiData['Cost'] ?? apiData['cost'] ?? 0);
-
-    // Type - la clé est "Type"
-    String type = apiData['Type'] ?? apiData['type'] ?? 'Unknown';
-
-    // Debug : afficher ce qui a été extrait
-    print('Carte convertie: $name (ID: $id, Set: $set, Type: $type)');
-
-    return CardModel(
-      id: id,
-      name: name,
-      imageUrl: imageUrl,
-      rarity: rarity,
-      set: set,
-      inkCost: inkCost,
-      type: type.isEmpty ? 'Unknown' : type,
-      prices: prices ?? [],
-      stockQuantity: 10, // Valeur par défaut
-    );
-  }
-
-  static String _normalizeRarity(String rarity) {
-    switch (rarity.toLowerCase()) {
-      case 'common':
-      case 'c':
-        return 'Common';
-      case 'uncommon':
-      case 'uc':
-      case 'u':
-        return 'Uncommon';
-      case 'rare':
-      case 'r':
-        return 'Rare';
-      case 'super rare':
-      case 'super_rare':
-      case 'sr':
-        return 'Super Rare';
-      case 'legendary':
-      case 'l':
-        return 'Legendary';
-      case 'enchanted':
-      case 'e':
-        return 'Enchanted';
-      default:
-        return 'Common';
-    }
-  }
-
-  static String _normalizeSetCode(String set) {
-    // Mapping des codes de sets Lorcana
-    final setMap = {
-      '1': 'TFC',
-      'tfc': 'TFC',
-      'the first chapter': 'TFC',
-      '2': 'ROF',
-      'rof': 'ROF',
-      'rise of the floodborn': 'ROF',
-      '3': 'ITI',
-      'iti': 'ITI',
-      'into the inklands': 'ITI',
-      '4': 'URR',
-      'urr': 'URR',
-      'ursula\'s return': 'URR',
-      '5': 'SSK',
-      'ssk': 'SSK',
-      'shimmering skies': 'SSK',
-      '6': 'AZU',
-      'azu': 'AZU',
-      'azurite sea': 'AZU',
-    };
-
-    final normalizedSet = set.toLowerCase();
-    return setMap[normalizedSet] ?? set.toUpperCase();
-  }
-
-  static int _extractNumber(dynamic value) {
-    if (value is int) return value;
-    if (value is double) return value.toInt();
-    if (value is String) return int.tryParse(value) ?? 0;
-    return 0;
   }
 }

@@ -1,4 +1,6 @@
+// lib/app/data/repositories/card_repository.dart
 import '../../services/lorcana_api_services.dart';
+import '../../services/lorcana_api_adapter.dart';
 import '../models/card_model.dart';
 import '../../services/mock_api_service.dart';
 
@@ -27,7 +29,7 @@ class CardRepository {
 
       print('Nombre de cartes reçues: ${apiCards.length}');
 
-      // Convertir vers notre modèle
+      // Convertir vers notre modèle en utilisant l'adaptateur
       final cards =
           apiCards
               .map((apiCard) {
