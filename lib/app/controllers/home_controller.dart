@@ -12,8 +12,6 @@ class HomeController extends GetxController {
   // Données
   final RxList<CardModel> cards = <CardModel>[].obs;
   final RxList<CardModel> likedCards = <CardModel>[].obs;
-  final RxList<CardModel> rejectedCards = <CardModel>[].obs;
-  final RxList<CardModel> superLikedCards = <CardModel>[].obs;
 
   // États
   final RxBool isLoading = false.obs;
@@ -29,11 +27,6 @@ class HomeController extends GetxController {
   final Rx<RangeValues> inkCostRange = Rx<RangeValues>(
     const RangeValues(0, 10),
   );
-
-  // Navigation
-  final RxInt currentCardIndex = 0.obs;
-  CardModel? lastActionCard;
-  String? lastAction;
 
   @override
   void onInit() {
@@ -94,91 +87,29 @@ class HomeController extends GetxController {
           card.inkCost >= inkCostRange.value.start &&
           card.inkCost <= inkCostRange.value.end;
 
-      // Exclure les cartes déjà swipées
-      final notSwiped =
-          !likedCards.contains(card) &&
-          !rejectedCards.contains(card) &&
-          !superLikedCards.contains(card);
-
       return matchesSearch &&
           matchesRarity &&
           matchesSet &&
           matchesInkColor &&
           matchesType &&
-          matchesInkCost &&
-          notSwiped;
+          matchesInkCost;
     }).toList();
   }
 
-  // Actions de swipe
-  void onCardLiked(CardModel card) {
-    likedCards.add(card);
-    lastActionCard = card;
-    lastAction = 'liked';
-    _showActionFeedback('Ajouté aux favoris!', const Color(0xFF4ECDC4));
+  // Actions sur les cartes
+  void toggleLikeCard(CardModel card) {
+    if (likedCards.contains(card)) {
+      likedCards.remove(card);
+      _showActionFeedback('Retiré des favoris', const Color(0xFFFF4757));
+    } else {
+      likedCards.add(card);
+      _showActionFeedback('Ajouté aux favoris!', const Color(0xFFFF4757));
+    }
   }
 
-  void onCardRejected(CardModel card) {
-    rejectedCards.add(card);
-    lastActionCard = card;
-    lastAction = 'rejected';
-  }
-
-  void onCardSuperLiked(CardModel card) {
-    superLikedCards.add(card);
+  void addCardToCart(CardModel card) {
     _cartController.addItem(card, 1);
-    lastActionCard = card;
-    lastAction = 'superLiked';
     _showActionFeedback('Ajouté au panier!', const Color(0xFF6BCF7F));
-  }
-
-  void likeCurrentCard() {
-    final cards = filteredCards;
-    if (cards.isNotEmpty) {
-      onCardLiked(cards.first);
-    }
-  }
-
-  void rejectCurrentCard() {
-    final cards = filteredCards;
-    if (cards.isNotEmpty) {
-      onCardRejected(cards.first);
-    }
-  }
-
-  void superLikeCurrentCard() {
-    final cards = filteredCards;
-    if (cards.isNotEmpty) {
-      onCardSuperLiked(cards.first);
-    }
-  }
-
-  void boostCurrentCard() {
-    final cards = filteredCards;
-    if (cards.isNotEmpty) {
-      Get.toNamed('/card-detail', arguments: cards.first.id);
-    }
-  }
-
-  void undoLastAction() {
-    if (lastActionCard == null || lastAction == null) return;
-
-    switch (lastAction) {
-      case 'liked':
-        likedCards.remove(lastActionCard);
-        break;
-      case 'rejected':
-        rejectedCards.remove(lastActionCard);
-        break;
-      case 'superLiked':
-        superLikedCards.remove(lastActionCard);
-        // Note: On ne retire pas du panier ici
-        break;
-    }
-
-    lastActionCard = null;
-    lastAction = null;
-    _showActionFeedback('Action annulée', const Color(0xFFFFD93D));
   }
 
   // Gestion des filtres
@@ -255,17 +186,9 @@ class HomeController extends GetxController {
             ? Icons.shopping_cart
             : message.contains('favoris')
             ? Icons.favorite
-            : Icons.undo,
+            : Icons.check,
         color: Colors.white,
       ),
     );
   }
-
-  // Statistiques
-  Map<String, int> get swipeStats => {
-    'liked': likedCards.length,
-    'rejected': rejectedCards.length,
-    'superLiked': superLikedCards.length,
-    'remaining': filteredCards.length,
-  };
 }
