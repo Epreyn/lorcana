@@ -3,4 +3,5 @@ abstract class AppRoutes {
   static const CARD_DETAIL = '/card-detail';
   static const CART = '/cart';
   static const PROFILE = '/profile';
+  static const API_TEST = '/api-test';
 }

@@ -1,25 +1,58 @@
 import '../models/price_model.dart';
-import '../providers/api_provider.dart';
+import '../models/card_model.dart';
+import '../../services/price_simulation_service.dart';
 
 class PriceRepository {
-  final ApiProvider _apiProvider = ApiProvider();
+  final PriceSimulationService _priceService = PriceSimulationService();
 
-  Future<List<PriceModel>> getPricesForCard(String cardId) async {
+  // Cache des prix
+  final Map<String, List<PriceModel>> _priceCache = {};
+  final Map<String, DateTime> _cacheTimestamps = {};
+  static const Duration _cacheExpiration = Duration(minutes: 5);
+
+  Future<List<PriceModel>> getPricesForCard(
+    String cardId, {
+    CardModel? card,
+  }) async {
+    // Vérifier le cache
+    if (_priceCache.containsKey(cardId)) {
+      final timestamp = _cacheTimestamps[cardId];
+      if (timestamp != null &&
+          DateTime.now().difference(timestamp) < _cacheExpiration) {
+        return _priceCache[cardId]!;
+      }
+    }
+
     try {
-      final response = await _apiProvider.get('/prices/card/$cardId');
-      return (response.data as List)
-          .map((price) => PriceModel.fromJson(price))
-          .toList();
+      // Pour l'instant, on utilise le service de simulation
+      // Dans le futur, on pourrait implémenter du web scraping ici
+
+      if (card == null) {
+        throw Exception('La carte est requise pour générer les prix');
+      }
+
+      final prices = await _priceService.generatePricesForCard(card);
+
+      // Mettre en cache
+      _priceCache[cardId] = prices;
+      _cacheTimestamps[cardId] = DateTime.now();
+
+      return prices;
     } catch (e) {
-      throw Exception('Erreur lors du chargement des prix');
+      print('Erreur lors du chargement des prix: $e');
+      // Retourner une liste vide en cas d'erreur
+      return [];
     }
   }
 
   Future<void> updatePrices(String cardId) async {
-    try {
-      await _apiProvider.post('/prices/update/$cardId', {});
-    } catch (e) {
-      throw Exception('Erreur lors de la mise à jour des prix');
-    }
+    // Invalider le cache pour forcer une mise à jour
+    _priceCache.remove(cardId);
+    _cacheTimestamps.remove(cardId);
+  }
+
+  void clearCache() {
+    _priceCache.clear();
+    _cacheTimestamps.clear();
   }
 }

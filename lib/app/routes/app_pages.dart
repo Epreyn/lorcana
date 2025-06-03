@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../modules/debug/api_text_view.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/card_detail/views/card_detail_view.dart';
 import '../modules/cart/views/cart_view.dart';
@@ -24,5 +25,6 @@ class AppPages {
       page: () => const CartView(),
       binding: CartBinding(),
     ),
+    GetPage(name: AppRoutes.API_TEST, page: () => const ApiTestView()),
   ];
 }
