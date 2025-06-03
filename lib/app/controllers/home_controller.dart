@@ -10,6 +10,7 @@ class HomeController extends GetxController {
   final RxString searchQuery = ''.obs;
   final Rx<String?> selectedRarity = Rx<String?>(null);
   final Rx<String?> selectedSet = Rx<String?>(null);
+  final RxBool isGridView = true.obs;
 
   @override
   void onInit() {
@@ -53,5 +54,15 @@ class HomeController extends GetxController {
 
   void filterBySet(String? set) {
     selectedSet.value = set;
+  }
+
+  void toggleView() {
+    isGridView.value = !isGridView.value;
+  }
+
+  void clearFilters() {
+    selectedRarity.value = null;
+    selectedSet.value = null;
+    searchQuery.value = '';
   }
 }

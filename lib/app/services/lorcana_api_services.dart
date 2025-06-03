@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import '../data/models/card_model.dart';
 import '../data/models/price_model.dart';
 
 class LorcanaApiService {
-  static const String baseUrl = 'https://lorcana-api.com/api/v1';
+  static const String baseUrl = 'https://api.lorcana-api.com';
   late Dio _dio;
 
   LorcanaApiService() {
@@ -23,15 +25,35 @@ class LorcanaApiService {
   // Récupérer toutes les cartes
   Future<List<Map<String, dynamic>>> fetchAllCards() async {
     try {
-      // D'après les logs, l'endpoint correct est /bulk/cards
+      print('Appel API: $baseUrl/bulk/cards');
       final response = await _dio.get('/bulk/cards');
+
+      print('Type de réponse: ${response.data.runtimeType}');
+      print('Status code: ${response.statusCode}');
+
+      // Si c'est une String, essayons de la parser
+      if (response.data is String) {
+        print('Réponse est une String, tentative de parsing JSON...');
+        try {
+          final parsed = json.decode(response.data);
+          if (parsed is List) {
+            print('Parsing réussi, ${parsed.length} cartes trouvées');
+            return List<Map<String, dynamic>>.from(parsed);
+          }
+        } catch (e) {
+          print('Erreur de parsing JSON: $e');
+          print('Contenu de la réponse: ${response.data}');
+        }
+      }
 
       // L'API retourne directement une liste
       if (response.data is List) {
+        print('Réponse est une List avec ${response.data.length} éléments');
         return List<Map<String, dynamic>>.from(response.data);
       }
 
       print('Format de réponse inattendu: ${response.data.runtimeType}');
+      print('Contenu: ${response.data}');
       return [];
     } catch (e) {
       print('Erreur lors de la récupération des cartes: $e');
@@ -115,6 +137,11 @@ class LorcanaApiAdapter {
     Map<String, dynamic> apiData, {
     List<PriceModel>? prices,
   }) {
+    // Debug : afficher les clés disponibles
+    if (apiData.isNotEmpty) {
+      print('Clés disponibles dans apiData: ${apiData.keys.toList()}');
+    }
+
     // Extraire l'ID de différentes façons possibles
     final id =
         (apiData['id'] ??
@@ -124,77 +151,34 @@ class LorcanaApiAdapter {
                 DateTime.now().millisecondsSinceEpoch)
             .toString();
 
-    // Extraire le nom complet
-    String name = apiData['name'] ?? 'Carte inconnue';
-    if (apiData['version'] != null &&
-        apiData['version'].toString().isNotEmpty) {
-      name += ' - ${apiData['version']}';
-    } else if (apiData['title'] != null &&
-        apiData['title'].toString().isNotEmpty) {
-      name += ' - ${apiData['title']}';
-    }
+    // Nom - la clé est "Name"
+    String name = apiData['Name'] ?? apiData['name'] ?? 'Carte inconnue';
 
-    // Extraire l'URL de l'image
-    String imageUrl = '';
-    if (apiData['image_uris'] != null && apiData['image_uris'] is Map) {
-      final images = apiData['image_uris'];
-      // Préférer les images digitales
-      if (images['digital'] != null && images['digital'] is Map) {
-        imageUrl =
-            images['digital']['large'] ??
-            images['digital']['normal'] ??
-            images['digital']['small'] ??
-            '';
-      }
-      // Sinon prendre n'importe quelle image disponible
-      if (imageUrl.isEmpty) {
-        imageUrl = images['large'] ?? images['normal'] ?? images['small'] ?? '';
-      }
-    } else if (apiData['image'] != null) {
-      imageUrl = apiData['image'];
-    } else if (apiData['images'] != null && apiData['images'] is Map) {
-      final images = apiData['images'];
-      imageUrl = images['large'] ?? images['medium'] ?? images['small'] ?? '';
-    }
-
-    // Image par défaut si aucune n'est trouvée
+    // URL de l'image - la clé est "Image"
+    String imageUrl = apiData['Image'] ?? apiData['image'] ?? '';
     if (imageUrl.isEmpty) {
       imageUrl =
           'https://via.placeholder.com/300x420/E3F2FD/1976D2?text=Lorcana';
     }
 
-    // Extraire la rareté
-    String rarity = (apiData['rarity'] ?? 'Common').toString();
+    // Rareté - la clé est "Rarity"
+    String rarity =
+        (apiData['Rarity'] ?? apiData['rarity'] ?? 'Common').toString();
     rarity = _normalizeRarity(rarity);
 
-    // Extraire le set
-    String set = '';
-    if (apiData['set'] != null && apiData['set'] is Map) {
-      set = apiData['set']['code'] ?? apiData['set']['name'] ?? '';
-    } else {
-      set = apiData['set_code'] ?? apiData['set_name'] ?? apiData['set'] ?? '';
-    }
+    // Set - la clé est "Set_ID"
+    String set =
+        apiData['Set_ID'] ?? apiData['Set_Name'] ?? apiData['set'] ?? 'Unknown';
     set = _normalizeSetCode(set);
 
-    // Extraire le coût en encre
-    final inkCost = _extractNumber(apiData['cost'] ?? apiData['ink_cost'] ?? 0);
+    // Coût en encre - la clé est "Cost"
+    final inkCost = _extractNumber(apiData['Cost'] ?? apiData['cost'] ?? 0);
 
-    // Extraire le type
-    String type = '';
-    if (apiData['type'] is List) {
-      type = (apiData['type'] as List).join(' - ');
-    } else {
-      type = apiData['type']?.toString() ?? '';
-    }
+    // Type - la clé est "Type"
+    String type = apiData['Type'] ?? apiData['type'] ?? 'Unknown';
 
-    // Ajouter les classifications si disponibles
-    if (apiData['classifications'] != null &&
-        apiData['classifications'] is List) {
-      final classifications = (apiData['classifications'] as List).join(', ');
-      if (classifications.isNotEmpty) {
-        type += type.isEmpty ? classifications : ' - $classifications';
-      }
-    }
+    // Debug : afficher ce qui a été extrait
+    print('Carte convertie: $name (ID: $id, Set: $set, Type: $type)');
 
     return CardModel(
       id: id,
