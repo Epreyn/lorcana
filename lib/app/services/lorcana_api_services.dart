@@ -23,36 +23,18 @@ class LorcanaApiService {
   // Récupérer toutes les cartes
   Future<List<Map<String, dynamic>>> fetchAllCards() async {
     try {
-      // L'API lorcana-api.com utilise /cards pour obtenir toutes les cartes
-      final response = await _dio.get('/cards');
+      // D'après les logs, l'endpoint correct est /bulk/cards
+      final response = await _dio.get('/bulk/cards');
 
-      // Gérer différents formats de réponse possibles
+      // L'API retourne directement une liste
       if (response.data is List) {
         return List<Map<String, dynamic>>.from(response.data);
-      } else if (response.data is Map) {
-        // Si c'est un objet, chercher les clés communes
-        if (response.data.containsKey('cards')) {
-          return List<Map<String, dynamic>>.from(response.data['cards']);
-        } else if (response.data.containsKey('data')) {
-          return List<Map<String, dynamic>>.from(response.data['data']);
-        } else if (response.data.containsKey('results')) {
-          return List<Map<String, dynamic>>.from(response.data['results']);
-        }
       }
 
       print('Format de réponse inattendu: ${response.data.runtimeType}');
       return [];
     } catch (e) {
       print('Erreur lors de la récupération des cartes: $e');
-      // Essayons avec un endpoint alternatif
-      try {
-        final response = await _dio.get('/bulk');
-        if (response.data is List) {
-          return List<Map<String, dynamic>>.from(response.data);
-        }
-      } catch (e2) {
-        print('Erreur avec endpoint alternatif: $e2');
-      }
       throw Exception(
         'Impossible de récupérer les cartes depuis l\'API Lorcana',
       );

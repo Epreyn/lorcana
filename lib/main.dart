@@ -18,7 +18,7 @@ class LorcanaApp extends StatelessWidget {
       title: 'Lorcana Price Comparator',
       initialBinding: InitialBinding(),
       getPages: AppPages.routes,
-      initialRoute: AppRoutes.API_TEST,
+      initialRoute: AppRoutes.HOME,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
