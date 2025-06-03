@@ -1,5 +1,5 @@
-// lib/app/modules/home/widgets/search_bar.dart
 import 'package:flutter/material.dart';
+import '../../../themes/app_colors.dart';
 
 class SearchBar extends StatelessWidget {
   final Function(String) onSearch;
@@ -18,12 +18,12 @@ class SearchBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         boxShadow: [
           BoxShadow(
             offset: const Offset(0, 2),
-            blurRadius: 6,
-            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            color: AppColors.primary.withOpacity(0.05),
           ),
         ],
       ),
@@ -33,13 +33,18 @@ class SearchBar extends StatelessWidget {
             onChanged: onSearch,
             decoration: InputDecoration(
               hintText: 'Rechercher une carte...',
-              prefixIcon: const Icon(Icons.search),
+              hintStyle: TextStyle(color: AppColors.textSecondary),
+              prefixIcon: Icon(Icons.search_rounded, color: AppColors.primary),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: AppColors.primary.withOpacity(0.05),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -51,41 +56,60 @@ class SearchBar extends StatelessWidget {
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 12,
-                      vertical: 8,
+                      vertical: 12,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: Colors.grey[100],
+                    fillColor: AppColors.primary.withOpacity(0.05),
                   ),
-                  hint: const Text('Rareté', overflow: TextOverflow.ellipsis),
-                  items: const [
+                  hint: Text(
+                    'Rareté',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: AppColors.textSecondary),
+                  ),
+                  dropdownColor: AppColors.surface,
+                  items: [
                     DropdownMenuItem(
                       value: null,
-                      child: Text('Toutes', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Toutes',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'Common',
-                      child: Text('Commune', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Commune',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'Uncommon',
                       child: Text(
                         'Peu commune',
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
                       ),
                     ),
                     DropdownMenuItem(
                       value: 'Rare',
-                      child: Text('Rare', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Rare',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'Super Rare',
                       child: Text(
                         'Super Rare',
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
                       ),
                     ),
                     DropdownMenuItem(
@@ -93,10 +117,15 @@ class SearchBar extends StatelessWidget {
                       child: Text(
                         'Légendaire',
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
                       ),
                     ),
                   ],
                   onChanged: onFilterRarity,
+                  icon: Icon(
+                    Icons.arrow_drop_down_rounded,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -106,45 +135,68 @@ class SearchBar extends StatelessWidget {
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 12,
-                      vertical: 8,
+                      vertical: 12,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: Colors.grey[100],
+                    fillColor: AppColors.primary.withOpacity(0.05),
                   ),
-                  hint: const Text('Set', overflow: TextOverflow.ellipsis),
-                  items: const [
+                  hint: Text(
+                    'Set',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: AppColors.textSecondary),
+                  ),
+                  dropdownColor: AppColors.surface,
+                  items: [
                     DropdownMenuItem(
                       value: null,
-                      child: Text('Tous', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Tous',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'TFC',
                       child: Text(
                         'First Chapter',
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
                       ),
                     ),
                     DropdownMenuItem(
                       value: 'ROF',
-                      child: Text('Floodborn', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Floodborn',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'ITI',
-                      child: Text('Inklands', overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        'Inklands',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'URR',
                       child: Text(
                         'Ursula Return',
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppColors.textPrimary),
                       ),
                     ),
                   ],
                   onChanged: onFilterSet,
+                  icon: Icon(
+                    Icons.arrow_drop_down_rounded,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
             ],

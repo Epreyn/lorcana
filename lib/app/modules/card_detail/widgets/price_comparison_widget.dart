@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/price_comparison_controller.dart';
 import '../../../data/models/card_model.dart';
+import '../../../themes/app_colors.dart';
 
 class PriceComparisonWidget extends StatelessWidget {
   final String cardId;
@@ -20,10 +21,15 @@ class PriceComparisonWidget extends StatelessWidget {
 
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Center(
+        return Center(
           child: Padding(
-            padding: EdgeInsets.all(20.0),
-            child: CircularProgressIndicator(),
+            padding: const EdgeInsets.all(20.0),
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                AppColors.primary.withOpacity(0.6),
+              ),
+              strokeWidth: 2,
+            ),
           ),
         );
       }
@@ -32,28 +38,46 @@ class PriceComparisonWidget extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
+            color: AppColors.primary.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.primary.withOpacity(0.1),
+              width: 1,
+            ),
           ),
           child: Column(
             children: [
-              Icon(Icons.search_off, size: 48, color: Colors.grey[400]),
+              Icon(
+                Icons.search_off_rounded,
+                size: 48,
+                color: AppColors.primary.withOpacity(0.3),
+              ),
               const SizedBox(height: 8),
-              const Text('Aucun prix disponible'),
+              Text(
+                'Aucun prix disponible',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               const SizedBox(height: 4),
               Text(
                 'Les prix seront bientôt disponibles',
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 12),
               ElevatedButton.icon(
                 onPressed: controller.refreshPrices,
-                icon: const Icon(Icons.refresh, size: 16),
+                icon: const Icon(Icons.refresh_rounded, size: 16),
                 label: const Text('Actualiser'),
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 8,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
               ),
@@ -70,11 +94,15 @@ class PriceComparisonWidget extends StatelessWidget {
             children: [
               Text(
                 '${controller.prices.length} offres trouvées',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
               ),
               IconButton(
                 onPressed: controller.refreshPrices,
-                icon: const Icon(Icons.refresh, size: 20),
+                icon: Icon(
+                  Icons.refresh_rounded,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
                 tooltip: 'Actualiser les prix',
               ),
             ],
@@ -89,10 +117,16 @@ class PriceComparisonWidget extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isBestPrice ? Colors.green[50] : Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                color:
+                    isBestPrice
+                        ? AppColors.success.withOpacity(0.1)
+                        : AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isBestPrice ? Colors.green : Colors.grey[300]!,
+                  color:
+                      isBestPrice
+                          ? AppColors.success.withOpacity(0.3)
+                          : AppColors.primary.withOpacity(0.1),
                   width: isBestPrice ? 2 : 1,
                 ),
               ),
@@ -100,24 +134,27 @@ class PriceComparisonWidget extends StatelessWidget {
                 children: [
                   // Logo du vendeur
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                     child: Container(
                       width: 50,
                       height: 50,
-                      color: Colors.grey[200],
+                      color: AppColors.primary.withOpacity(0.05),
                       child:
                           price.seller.logoUrl.isNotEmpty
                               ? Image.network(
                                 price.seller.logoUrl,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(
-                                    Icons.store,
-                                    color: Colors.grey,
+                                  return Icon(
+                                    Icons.store_rounded,
+                                    color: AppColors.primary.withOpacity(0.3),
                                   );
                                 },
                               )
-                              : const Icon(Icons.store, color: Colors.grey),
+                              : Icon(
+                                Icons.store_rounded,
+                                color: AppColors.primary.withOpacity(0.3),
+                              ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -132,9 +169,10 @@ class PriceComparisonWidget extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 price.seller.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 16,
+                                  color: AppColors.textPrimary,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -147,7 +185,7 @@ class PriceComparisonWidget extends StatelessWidget {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.green,
+                                  color: AppColors.success,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Text(
@@ -171,7 +209,7 @@ class PriceComparisonWidget extends StatelessWidget {
                                   : price.condition == 'LP'
                                   ? 'Légèrement joué'
                                   : price.condition,
-                              Colors.blue,
+                              AppColors.sapphireInk,
                             ),
                             const SizedBox(width: 8),
                             // Langue
@@ -181,14 +219,14 @@ class PriceComparisonWidget extends StatelessWidget {
                                   : price.language == 'EN'
                                   ? 'Anglais'
                                   : price.language,
-                              Colors.purple,
+                              AppColors.amethystInk,
                             ),
                             const SizedBox(width: 8),
                             // Stock
                             if (!price.inStock)
-                              _buildChip('Rupture', Colors.red)
+                              _buildChip('Rupture', AppColors.error)
                             else
-                              _buildChip('En stock', Colors.green),
+                              _buildChip('En stock', AppColors.success),
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -196,7 +234,7 @@ class PriceComparisonWidget extends StatelessWidget {
                           price.seller.shippingInfo,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -214,23 +252,26 @@ class PriceComparisonWidget extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: isBestPrice ? Colors.green : Colors.black,
+                          color:
+                              isBestPrice
+                                  ? AppColors.success
+                                  : AppColors.textPrimary,
                         ),
                       ),
                       if (price.seller.rating > 0)
                         Row(
                           children: [
                             Icon(
-                              Icons.star,
+                              Icons.star_rounded,
                               size: 14,
-                              color: Colors.amber[600],
+                              color: AppColors.warning,
                             ),
                             const SizedBox(width: 2),
                             Text(
                               price.seller.rating.toStringAsFixed(1),
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey[600],
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -248,18 +289,28 @@ class PriceComparisonWidget extends StatelessWidget {
               margin: const EdgeInsets.only(top: 12),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue[200]!),
+                color: AppColors.primary.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.primary.withOpacity(0.1),
+                  width: 1,
+                ),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, size: 16, color: Colors.blue[700]),
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 16,
+                    color: AppColors.primary,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Prix fournis par Cardmarket • Mis à jour ${_getTimeAgo(controller.prices.first.updatedAt)}',
-                      style: TextStyle(fontSize: 12, color: Colors.blue[700]),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
                 ],
@@ -275,14 +326,15 @@ class PriceComparisonWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Text(
         label,
         style: TextStyle(
           fontSize: 11,
-          color: color,
-          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

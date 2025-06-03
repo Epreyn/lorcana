@@ -1,4 +1,3 @@
-// lib/app/modules/home/widgets/carousel_card_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math' as math;
@@ -23,43 +22,6 @@ class CarouselCardView extends StatefulWidget {
   State<CarouselCardView> createState() => _CarouselCardViewState();
 }
 
-// Custom ScrollPhysics pour permettre le scroll libre mais avec snap à la fin
-class CustomPageScrollPhysics extends ScrollPhysics {
-  const CustomPageScrollPhysics({ScrollPhysics? parent})
-    : super(parent: parent);
-
-  @override
-  CustomPageScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return CustomPageScrollPhysics(parent: buildParent(ancestor));
-  }
-
-  @override
-  Simulation? createBallisticSimulation(
-    ScrollMetrics position,
-    double velocity,
-  ) {
-    // Si la vélocité est faible, on snap immédiatement
-    if (velocity.abs() < 500) {
-      final double page = position.pixels / position.viewportDimension;
-      final double target = page.roundToDouble() * position.viewportDimension;
-
-      return ScrollSpringSimulation(
-        spring,
-        position.pixels,
-        target,
-        velocity,
-        tolerance: tolerance,
-      );
-    }
-
-    // Sinon, on laisse le scroll se faire naturellement
-    return super.createBallisticSimulation(position, velocity);
-  }
-
-  @override
-  bool get allowImplicitScrolling => false;
-}
-
 class _CarouselCardViewState extends State<CarouselCardView> {
   late PageController _pageController;
   int _currentIndex = 0;
@@ -73,24 +35,6 @@ class _CarouselCardViewState extends State<CarouselCardView> {
       viewportFraction: 0.8,
       initialPage: _currentIndex,
     );
-  }
-
-  void _snapToNearestCard() {
-    if (!_pageController.hasClients) return;
-
-    final page = _pageController.page ?? 0;
-    final nearestPage = page.round();
-
-    // Animer vers la page la plus proche
-    _pageController.animateToPage(
-      nearestPage,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-
-    setState(() {
-      _currentIndex = nearestPage % widget.cards.length;
-    });
   }
 
   @override
@@ -112,57 +56,46 @@ class _CarouselCardViewState extends State<CarouselCardView> {
   Widget build(BuildContext context) {
     if (widget.cards.isEmpty) return const SizedBox.shrink();
 
-    return NotificationListener<ScrollNotification>(
-      onNotification: (ScrollNotification notification) {
-        if (notification is ScrollEndNotification) {
-          // Le scroll s'est arrêté
-          Future.microtask(() => _snapToNearestCard());
-        }
-        return false;
+    return PageView.builder(
+      controller: _pageController,
+      physics: const PageScrollPhysics(),
+      pageSnapping: true,
+      onPageChanged: (index) {
+        setState(() {
+          _currentIndex = index % widget.cards.length;
+        });
       },
-      child: PageView.builder(
-        controller: _pageController,
-        physics:
-            const PageScrollPhysics(), // Utiliser PageScrollPhysics au lieu de BouncingScrollPhysics
-        pageSnapping: true, // Activer le snap natif
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index % widget.cards.length;
-          });
-        },
-        itemBuilder: (context, index) {
-          final cardIndex = index % widget.cards.length;
-          final card = widget.cards[cardIndex];
+      itemBuilder: (context, index) {
+        final cardIndex = index % widget.cards.length;
+        final card = widget.cards[cardIndex];
 
-          return AnimatedBuilder(
-            animation: _pageController,
-            builder: (context, child) {
-              double value = 0.0;
-              if (_pageController.position.haveDimensions) {
-                value = index.toDouble() - (_pageController.page ?? 0);
-                value = (value * 0.8).clamp(-1, 1);
-              }
+        return AnimatedBuilder(
+          animation: _pageController,
+          builder: (context, child) {
+            double value = 0.0;
+            if (_pageController.position.haveDimensions) {
+              value = index.toDouble() - (_pageController.page ?? 0);
+              value = (value * 0.8).clamp(-1, 1);
+            }
 
-              double scale = 1 - (value.abs() * 0.1);
-              double opacity = 1 - (value.abs() * 0.3);
+            double scale = 1 - (value.abs() * 0.1);
+            double opacity = 1 - (value.abs() * 0.3);
 
-              return Center(
-                child: Transform.scale(
-                  scale: scale,
-                  child: Opacity(
-                    opacity: opacity,
-                    child: _buildCard(card, cardIndex == _currentIndex),
-                  ),
+            return Center(
+              child: Transform.scale(
+                scale: scale,
+                child: Opacity(
+                  opacity: opacity,
+                  child: _buildCard(card, cardIndex == _currentIndex),
                 ),
-              );
-            },
-          );
-        },
-      ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
-  // lib/app/modules/home/widgets/carousel_card_view.dart
   Widget _buildCard(CardModel card, bool isCurrent) {
     final isLiked = _likedCards[card.id] ?? false;
     final isInCart = _cartCards[card.id] ?? false;
@@ -172,7 +105,7 @@ class _CarouselCardViewState extends State<CarouselCardView> {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
         child: AspectRatio(
-          aspectRatio: 63 / 88,
+          aspectRatio: 63 / 88, // Ratio Lorcana
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -211,24 +144,24 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                     },
                   ),
 
-                  // Overlay avec infos en bas
+                  // Overlay sombre en bas pour la lisibilité
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      // decoration: BoxDecoration(
-                      //   gradient: LinearGradient(
-                      //     begin: Alignment.topCenter,
-                      //     end: Alignment.bottomCenter,
-                      //     colors: [
-                      //       Colors.transparent,
-                      //       Colors.white.withOpacity(0.7),
-                      //       Colors.white.withOpacity(0.9),
-                      //     ],
-                      //   ),
-                      // ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.5),
+                            Colors.black.withOpacity(0.7),
+                          ],
+                        ),
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -239,9 +172,7 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                               vertical: 10,
                             ),
                             decoration: BoxDecoration(
-                              color:
-                                  AppColors
-                                      .success, // Couleur pleine pour la visibilité
+                              color: AppColors.success,
                               borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
@@ -271,6 +202,7 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                                         : Icons.favorite_border_rounded,
                                 color: AppColors.error,
                                 isActive: isLiked,
+                                backgroundColor: Colors.white.withOpacity(0.9),
                                 onTap: () {
                                   setState(() {
                                     _likedCards[card.id] = !isLiked;
@@ -286,6 +218,7 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                                         : Icons.shopping_bag_outlined,
                                 color: AppColors.primary,
                                 isActive: isInCart,
+                                backgroundColor: Colors.white.withOpacity(0.9),
                                 onTap: () {
                                   setState(() {
                                     _cartCards[card.id] = !isInCart;
@@ -316,6 +249,13 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                                   ? AppColors.error
                                   : AppColors.warning,
                           borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: Text(
                           card.stockQuantity == 0
@@ -342,6 +282,7 @@ class _CarouselCardViewState extends State<CarouselCardView> {
     required IconData icon,
     required Color color,
     required bool isActive,
+    required Color backgroundColor,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -350,9 +291,15 @@ class _CarouselCardViewState extends State<CarouselCardView> {
         width: 42,
         height: 42,
         decoration: BoxDecoration(
-          color: isActive ? color : Colors.white,
+          color: isActive ? color : backgroundColor,
           shape: BoxShape.circle,
-          border: Border.all(color: color.withOpacity(0.3), width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Icon(icon, color: isActive ? Colors.white : color, size: 20),
       ),

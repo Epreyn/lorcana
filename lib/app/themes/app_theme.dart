@@ -78,6 +78,13 @@ class AppTheme {
           side: BorderSide(color: AppColors.primary.withOpacity(0.2)),
         ),
       ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+      ),
+      iconTheme: const IconThemeData(color: AppColors.textPrimary),
     );
   }
 

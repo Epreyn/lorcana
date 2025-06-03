@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/cart_controller.dart';
+import '../../../themes/app_colors.dart';
 import '../widgets/cart_item_widget.dart';
 
 class CartView extends StatelessWidget {
@@ -11,6 +12,7 @@ class CartView extends StatelessWidget {
     final CartController controller = Get.find();
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text('Mon Panier')),
       body: Obx(() {
         if (controller.items.isEmpty) {
@@ -18,20 +20,49 @@ class CartView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.shopping_cart_outlined,
-                  size: 100,
-                  color: Colors.grey[400],
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.primary.withOpacity(0.1),
+                    border: Border.all(
+                      color: AppColors.primary.withOpacity(0.2),
+                      width: 2,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 60,
+                    color: AppColors.primary.withOpacity(0.5),
+                  ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 Text(
                   'Votre panier est vide',
-                  style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () => Get.back(),
-                  child: const Text('Continuer mes achats'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  child: const Text(
+                    'Continuer mes achats',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
@@ -42,6 +73,7 @@ class CartView extends StatelessWidget {
           children: [
             Expanded(
               child: ListView.builder(
+                padding: const EdgeInsets.only(top: 8),
                 itemCount: controller.items.length,
                 itemBuilder: (context, index) {
                   return CartItemWidget(item: controller.items[index]);
@@ -51,12 +83,12 @@ class CartView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.surface,
                 boxShadow: [
                   BoxShadow(
                     offset: const Offset(0, -2),
-                    blurRadius: 6,
-                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    color: AppColors.primary.withOpacity(0.08),
                   ),
                 ],
               ),
@@ -65,19 +97,20 @@ class CartView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Total',
                         style: TextStyle(
                           fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       Text(
                         '${controller.totalPrice.toStringAsFixed(2)} €',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: AppColors.success,
                         ),
                       ),
                     ],
@@ -89,13 +122,18 @@ class CartView extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: controller.checkout,
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.success,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: const Text(
                         'Valider la commande',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

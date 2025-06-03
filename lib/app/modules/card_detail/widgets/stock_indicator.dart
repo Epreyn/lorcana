@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../themes/app_colors.dart';
 
 class StockIndicator extends StatelessWidget {
   final int quantity;
@@ -12,16 +13,16 @@ class StockIndicator extends StatelessWidget {
     String text;
 
     if (quantity == 0) {
-      color = Colors.red;
-      icon = Icons.cancel;
+      color = AppColors.error;
+      icon = Icons.cancel_rounded;
       text = 'Rupture';
     } else if (quantity < 5) {
-      color = Colors.orange;
-      icon = Icons.warning;
+      color = AppColors.warning;
+      icon = Icons.warning_rounded;
       text = 'Stock faible';
     } else {
-      color = Colors.green;
-      icon = Icons.check_circle;
+      color = AppColors.success;
+      icon = Icons.check_circle_rounded;
       text = 'En stock';
     }
 
@@ -30,6 +31,7 @@ class StockIndicator extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Row(
         children: [
@@ -37,7 +39,10 @@ class StockIndicator extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             text,
-            style: TextStyle(color: color, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

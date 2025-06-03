@@ -15,6 +15,7 @@ class CardDetailView extends StatelessWidget {
     final PriceComparisonController priceController = Get.find();
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Obx(
           () => Text(
@@ -24,14 +25,21 @@ class CardDetailView extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart),
+            icon: Icon(Icons.shopping_cart_rounded, color: AppColors.primary),
             onPressed: () => Get.toNamed('/cart'),
           ),
         ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                AppColors.primary.withOpacity(0.6),
+              ),
+              strokeWidth: 2,
+            ),
+          );
         }
 
         final card = controller.selectedCard.value;
@@ -47,13 +55,17 @@ class CardDetailView extends StatelessWidget {
               Container(
                 height: 350,
                 width: double.infinity,
-                color: Colors.black,
+                color: AppColors.primary.withOpacity(0.05),
                 child: Image.network(
                   card.imageUrl,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
-                    return const Center(
-                      child: Icon(Icons.error, color: Colors.white, size: 50),
+                    return Center(
+                      child: Icon(
+                        Icons.image_not_supported_rounded,
+                        color: AppColors.primary.withOpacity(0.3),
+                        size: 60,
+                      ),
                     );
                   },
                 ),
@@ -67,15 +79,19 @@ class CardDetailView extends StatelessWidget {
                     // Nom et set
                     Text(
                       card.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '${card.set} • ${card.rarity}',
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
 
                     const SizedBox(height: 16),
@@ -85,14 +101,14 @@ class CardDetailView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         _buildInfoChip(
-                          Icons.water_drop,
+                          Icons.water_drop_rounded,
                           '${card.inkCost}',
-                          Colors.blue,
+                          AppColors.sapphireInk,
                         ),
                         _buildInfoChip(
-                          Icons.category,
+                          Icons.category_rounded,
                           card.type,
-                          Colors.purple,
+                          AppColors.amethystInk,
                         ),
                         StockIndicator(quantity: card.stockQuantity),
                       ],
@@ -104,35 +120,30 @@ class CardDetailView extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(
-                          0.1,
-                        ), // Au lieu de Colors.green.withOpacity(0.1)
-                        borderRadius: BorderRadius.circular(
-                          16,
-                        ), // Au lieu de 12
+                        color: AppColors.success.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: AppColors.success.withOpacity(
-                            0.2,
-                          ), // Au lieu de Colors.green
-                          width: 1, // Au lieu de border direct
+                          color: AppColors.success.withOpacity(0.2),
+                          width: 1,
                         ),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'Meilleur prix',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
+                              color: AppColors.textPrimary,
                             ),
                           ),
                           Text(
                             '${card.lowestPrice.toStringAsFixed(2)} €',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.green,
+                              color: AppColors.success,
                             ),
                           ),
                         ],
@@ -142,11 +153,12 @@ class CardDetailView extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // Comparaison des prix
-                    const Text(
+                    Text(
                       'Comparaison des prix',
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -158,12 +170,8 @@ class CardDetailView extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(
-                          0.05,
-                        ), // Au lieu de Colors.grey[100]
-                        borderRadius: BorderRadius.circular(
-                          16,
-                        ), // Au lieu de 12
+                        color: AppColors.primary.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: AppColors.primary.withOpacity(0.1),
                           width: 1,
@@ -174,33 +182,51 @@ class CardDetailView extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Quantité',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               Row(
                                 children: [
                                   IconButton(
                                     onPressed: controller.decrementQuantity,
-                                    icon: const Icon(
-                                      Icons.remove_circle_outline,
+                                    icon: Icon(
+                                      Icons.remove_circle_outline_rounded,
+                                      color: AppColors.primary,
                                     ),
                                   ),
                                   Obx(
-                                    () => Text(
-                                      '${controller.quantity.value}',
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                                    () => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary.withOpacity(
+                                          0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        '${controller.quantity.value}',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.textPrimary,
+                                        ),
                                       ),
                                     ),
                                   ),
                                   IconButton(
                                     onPressed: controller.incrementQuantity,
-                                    icon: const Icon(Icons.add_circle_outline),
+                                    icon: Icon(
+                                      Icons.add_circle_outline_rounded,
+                                      color: AppColors.primary,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -215,12 +241,21 @@ class CardDetailView extends StatelessWidget {
                                   card.stockQuantity > 0
                                       ? controller.addToCart
                                       : null,
-                              icon: const Icon(Icons.shopping_cart),
+                              icon: const Icon(
+                                Icons.shopping_cart_rounded,
+                                color: Colors.white,
+                              ),
                               label: const Text(
                                 'Ajouter au panier',
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
                               ),
                               style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                disabledBackgroundColor: AppColors.primary
+                                    .withOpacity(0.3),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -246,6 +281,7 @@ class CardDetailView extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
       ),
       child: Row(
         children: [
@@ -253,7 +289,10 @@ class CardDetailView extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(color: color, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

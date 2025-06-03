@@ -1,4 +1,3 @@
-// lib/app/modules/home/widgets/floating_filter_bar.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/home_controller.dart';
@@ -139,18 +138,18 @@ class InkColorFilterSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inkColors = [
-      {'name': 'Amber', 'color': const Color(0xFFFFC107)},
-      {'name': 'Amethyst', 'color': const Color(0xFF9C27B0)},
-      {'name': 'Emerald', 'color': const Color(0xFF4CAF50)},
-      {'name': 'Ruby', 'color': const Color(0xFFF44336)},
-      {'name': 'Sapphire', 'color': const Color(0xFF2196F3)},
-      {'name': 'Steel', 'color': const Color(0xFF607D8B)},
+      {'name': 'Amber', 'color': AppColors.amberInk},
+      {'name': 'Amethyst', 'color': AppColors.amethystInk},
+      {'name': 'Emerald', 'color': AppColors.emeraldInk},
+      {'name': 'Ruby', 'color': AppColors.rubyInk},
+      {'name': 'Sapphire', 'color': AppColors.sapphireInk},
+      {'name': 'Steel', 'color': AppColors.steelInk},
     ];
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.surface, // Au lieu de Color(0xFF1A1F3A)
+        color: AppColors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(
           top: BorderSide(color: AppColors.primary.withOpacity(0.1), width: 1),
@@ -164,16 +163,16 @@ class InkColorFilterSheet extends StatelessWidget {
             height: 4,
             margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.3),
+              color: AppColors.primary.withOpacity(0.2),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const Text(
+          Text(
             'Filtrer par couleur d\'encre',
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 24),
@@ -196,32 +195,12 @@ class InkColorFilterSheet extends StatelessWidget {
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              color.withOpacity(isSelected ? 1 : 0.3),
-                              color.withOpacity(isSelected ? 0.8 : 0.2),
-                            ],
-                          ),
+                          color: isSelected ? color : color.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color:
-                                isSelected
-                                    ? Colors.white
-                                    : Colors.white.withOpacity(0.3),
+                            color: color.withOpacity(isSelected ? 0.8 : 0.3),
                             width: isSelected ? 3 : 1,
                           ),
-                          boxShadow:
-                              isSelected
-                                  ? [
-                                    BoxShadow(
-                                      color: color.withOpacity(0.4),
-                                      blurRadius: 20,
-                                      offset: const Offset(0, 5),
-                                    ),
-                                  ]
-                                  : [],
                         ),
                         child: Center(
                           child: Column(
@@ -232,22 +211,10 @@ class InkColorFilterSheet extends StatelessWidget {
                                 height: 30,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: color.withOpacity(0.5),
-                                      blurRadius: 10,
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: color,
-                                    ),
+                                  color: isSelected ? Colors.white : color,
+                                  border: Border.all(
+                                    color: isSelected ? color : Colors.white,
+                                    width: 2,
                                   ),
                                 ),
                               ),
@@ -255,7 +222,10 @@ class InkColorFilterSheet extends StatelessWidget {
                               Text(
                                 name,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color:
+                                      isSelected
+                                          ? Colors.white
+                                          : AppColors.textPrimary,
                                   fontSize: 12,
                                   fontWeight:
                                       isSelected
@@ -280,9 +250,9 @@ class InkColorFilterSheet extends StatelessWidget {
                     controller.clearInkColors();
                     Navigator.pop(context);
                   },
-                  child: const Text(
+                  child: Text(
                     'Effacer',
-                    style: TextStyle(color: Colors.white54),
+                    style: TextStyle(color: AppColors.textSecondary),
                   ),
                 ),
               ),
@@ -291,7 +261,7 @@ class InkColorFilterSheet extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6C63FF),
+                    backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -325,36 +295,46 @@ class RarityFilterSheet extends StatelessWidget {
     final rarities = [
       {
         'name': 'Common',
+        'label': 'Commune',
         'icon': Icons.circle,
-        'color': const Color(0xFF9E9E9E),
+        'color': AppColors.common,
       },
       {
         'name': 'Uncommon',
+        'label': 'Peu commune',
         'icon': Icons.square,
-        'color': const Color(0xFF4CAF50),
+        'color': AppColors.uncommon,
       },
-      {'name': 'Rare', 'icon': Icons.diamond, 'color': const Color(0xFF2196F3)},
+      {
+        'name': 'Rare',
+        'label': 'Rare',
+        'icon': Icons.diamond,
+        'color': AppColors.rare,
+      },
       {
         'name': 'Super Rare',
+        'label': 'Super Rare',
         'icon': Icons.star,
-        'color': const Color(0xFF9C27B0),
+        'color': AppColors.superRare,
       },
       {
         'name': 'Legendary',
+        'label': 'Légendaire',
         'icon': Icons.auto_awesome,
-        'color': const Color(0xFFFF9800),
+        'color': AppColors.legendary,
       },
       {
         'name': 'Enchanted',
+        'label': 'Enchantée',
         'icon': Icons.blur_on,
-        'color': const Color(0xFFE91E63),
+        'color': AppColors.enchanted,
       },
     ];
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.surface, // Au lieu de Color(0xFF1A1F3A)
+        color: AppColors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(
           top: BorderSide(color: AppColors.primary.withOpacity(0.1), width: 1),
@@ -368,21 +348,22 @@ class RarityFilterSheet extends StatelessWidget {
             height: 4,
             margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.3),
+              color: AppColors.primary.withOpacity(0.2),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const Text(
+          Text(
             'Filtrer par rareté',
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 24),
           ...rarities.map((rarity) {
             final name = rarity['name'] as String;
+            final label = rarity['label'] as String;
             final icon = rarity['icon'] as IconData;
             final color = rarity['color'] as Color;
 
@@ -397,19 +378,13 @@ class RarityFilterSheet extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    gradient:
-                        isSelected
-                            ? LinearGradient(
-                              colors: [
-                                color.withOpacity(0.3),
-                                color.withOpacity(0.1),
-                              ],
-                            )
-                            : null,
-                    color: isSelected ? null : Colors.white.withOpacity(0.05),
+                    color: isSelected ? color.withOpacity(0.1) : Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isSelected ? color : Colors.white.withOpacity(0.2),
+                      color:
+                          isSelected
+                              ? color
+                              : AppColors.primary.withOpacity(0.1),
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -427,9 +402,9 @@ class RarityFilterSheet extends StatelessWidget {
                       const SizedBox(width: 16),
                       Expanded(
                         child: Text(
-                          name,
+                          label,
                           style: TextStyle(
-                            color: isSelected ? color : Colors.white70,
+                            color: isSelected ? color : AppColors.textPrimary,
                             fontSize: 16,
                             fontWeight:
                                 isSelected
@@ -464,37 +439,37 @@ class SetFilterSheet extends StatelessWidget {
       {
         'code': 'TFC',
         'name': 'The First Chapter',
-        'color': const Color(0xFF1976D2),
+        'color': AppColors.primary,
         'icon': '1',
       },
       {
         'code': 'ROF',
         'name': 'Rise of the Floodborn',
-        'color': const Color(0xFF00ACC1),
+        'color': AppColors.sapphireInk,
         'icon': '2',
       },
       {
         'code': 'ITI',
         'name': 'Into the Inklands',
-        'color': const Color(0xFF43A047),
+        'color': AppColors.emeraldInk,
         'icon': '3',
       },
       {
         'code': 'URR',
         'name': 'Ursula\'s Return',
-        'color': const Color(0xFF8E24AA),
+        'color': AppColors.amethystInk,
         'icon': '4',
       },
       {
         'code': 'SSK',
         'name': 'Shimmering Skies',
-        'color': const Color(0xFFFFB300),
+        'color': AppColors.amberInk,
         'icon': '5',
       },
       {
         'code': 'AZU',
         'name': 'Azurite Sea',
-        'color': const Color(0xFF0277BD),
+        'color': AppColors.sapphireInk,
         'icon': '6',
       },
     ];
@@ -502,7 +477,7 @@ class SetFilterSheet extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.surface, // Au lieu de Color(0xFF1A1F3A)
+        color: AppColors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(
           top: BorderSide(color: AppColors.primary.withOpacity(0.1), width: 1),
@@ -516,16 +491,16 @@ class SetFilterSheet extends StatelessWidget {
             height: 4,
             margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.3),
+              color: AppColors.primary.withOpacity(0.2),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const Text(
+          Text(
             'Filtrer par édition',
             style: TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 24),
@@ -556,35 +531,12 @@ class SetFilterSheet extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors:
-                            isSelected
-                                ? [color, color.withOpacity(0.7)]
-                                : [
-                                  Colors.white.withOpacity(0.1),
-                                  Colors.white.withOpacity(0.05),
-                                ],
-                      ),
+                      color: isSelected ? color : color.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color:
-                            isSelected
-                                ? Colors.white
-                                : Colors.white.withOpacity(0.2),
+                        color: color.withOpacity(isSelected ? 0.8 : 0.3),
                         width: isSelected ? 2 : 1,
                       ),
-                      boxShadow:
-                          isSelected
-                              ? [
-                                BoxShadow(
-                                  color: color.withOpacity(0.4),
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 5),
-                                ),
-                              ]
-                              : [],
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -594,15 +546,13 @@ class SetFilterSheet extends StatelessWidget {
                           height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(
-                              isSelected ? 1 : 0.2,
-                            ),
+                            color: isSelected ? Colors.white : color,
                           ),
                           child: Center(
                             child: Text(
                               icon,
                               style: TextStyle(
-                                color: isSelected ? color : Colors.white70,
+                                color: isSelected ? color : Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -612,8 +562,11 @@ class SetFilterSheet extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           code,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color:
+                                isSelected
+                                    ? Colors.white
+                                    : AppColors.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),

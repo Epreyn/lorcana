@@ -9,9 +9,9 @@ class LorcanaApiAdapter {
     List<PriceModel>? prices,
   }) {
     // Debug : afficher les clés disponibles
-    if (apiData.isNotEmpty) {
-      print('Clés disponibles dans apiData: ${apiData.keys.toList()}');
-    }
+    // if (apiData.isNotEmpty) {
+    //   print('Clés disponibles dans apiData: ${apiData.keys.toList()}');
+    // }
 
     // Extraire l'ID
     final id =
@@ -127,9 +127,9 @@ class LorcanaApiAdapter {
         true;
 
     // Debug
-    print(
-      'Carte convertie: $name${version != null ? " - $version" : ""} (ID: $id, Set: $setCode, Type: $type, Color: $inkColor)',
-    );
+    // print(
+    //   'Carte convertie: $name${version != null ? " - $version" : ""} (ID: $id, Set: $setCode, Type: $type, Color: $inkColor)',
+    // );
 
     return CardModel(
       id: id,

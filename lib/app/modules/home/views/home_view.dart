@@ -1,10 +1,10 @@
-// lib/app/modules/home/views/home_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'dart:math' as math;
 import '../../../controllers/home_controller.dart';
 import '../../../themes/app_colors.dart';
+import '../../../data/models/card_model.dart';
 import '../widgets/carousel_card_view.dart';
 import '../widgets/floating_filter_bar.dart';
 
