@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/home_controller.dart';
+import '../../../themes/app_colors.dart';
 
 class FloatingFilterBar extends StatelessWidget {
   final HomeController controller;
@@ -11,60 +12,48 @@ class FloatingFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
+      height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Filtre par couleur d'encre
           Obx(
             () => _buildFilterButton(
-              icon: Icons.palette,
+              icon: Icons.palette_rounded,
               label: 'Couleur',
               isActive: controller.selectedInkColors.isNotEmpty,
               onTap: () => _showInkColorFilter(context),
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
-              ),
+              color: AppColors.secondary,
             ),
           ),
 
-          // Filtre par rareté
           Obx(
             () => _buildFilterButton(
-              icon: Icons.star,
+              icon: Icons.star_rounded,
               label: 'Rareté',
               isActive: controller.selectedRarity.value != null,
               onTap: () => _showRarityFilter(context),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
-              ),
+              color: AppColors.primary,
             ),
           ),
 
-          // Filtre par set
           Obx(
             () => _buildFilterButton(
-              icon: Icons.collections,
-              label: 'Edition',
+              icon: Icons.collections_rounded,
+              label: 'Édition',
               isActive: controller.selectedSet.value != null,
               onTap: () => _showSetFilter(context),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF06BEB6), Color(0xFF48B1BF)],
-              ),
+              color: AppColors.success,
             ),
           ),
 
-          // Plus de filtres
           Obx(
             () => _buildFilterButton(
-              icon: Icons.tune,
+              icon: Icons.tune_rounded,
               label: 'Plus',
               isActive: controller.hasAdvancedFilters,
               onTap: () => controller.showAdvancedFilters.value = true,
-              gradient: const LinearGradient(
-                colors: [Color(0xFFEC008C), Color(0xFFFC6767)],
-              ),
+              color: AppColors.warning,
             ),
           ),
         ],
@@ -77,43 +66,36 @@ class FloatingFilterBar extends StatelessWidget {
     required String label,
     required bool isActive,
     required VoidCallback onTap,
-    required Gradient gradient,
+    required Color color,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        width: 60,
-        height: 60,
+        duration: const Duration(milliseconds: 200),
+        width: 64,
+        height: 64,
         decoration: BoxDecoration(
-          gradient: isActive ? gradient : null,
-          color: isActive ? null : Colors.white.withOpacity(0.1),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isActive ? Colors.white : Colors.white.withOpacity(0.2),
-            width: isActive ? 2 : 1,
-          ),
-          boxShadow:
-              isActive
-                  ? [
-                    BoxShadow(
-                      color: gradient.colors.first.withOpacity(0.4),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ]
-                  : [],
+          color: isActive ? color : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.3), width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(isActive ? 0.2 : 0.1),
+              blurRadius: isActive ? 20 : 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 24),
+            Icon(icon, color: isActive ? Colors.white : color, size: 24),
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
+              style: TextStyle(
+                color: isActive ? Colors.white : color,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -167,9 +149,12 @@ class InkColorFilterSheet extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Color(0xFF1A1F3A),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: AppColors.surface, // Au lieu de Color(0xFF1A1F3A)
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(
+          top: BorderSide(color: AppColors.primary.withOpacity(0.1), width: 1),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -368,9 +353,12 @@ class RarityFilterSheet extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Color(0xFF1A1F3A),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: AppColors.surface, // Au lieu de Color(0xFF1A1F3A)
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(
+          top: BorderSide(color: AppColors.primary.withOpacity(0.1), width: 1),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -513,9 +501,12 @@ class SetFilterSheet extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Color(0xFF1A1F3A),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: AppColors.surface, // Au lieu de Color(0xFF1A1F3A)
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(
+          top: BorderSide(color: AppColors.primary.withOpacity(0.1), width: 1),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

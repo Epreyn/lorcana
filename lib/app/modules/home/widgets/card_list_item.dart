@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math';
 import '../../../data/models/card_model.dart';
+import '../../../themes/app_colors.dart';
 
 class CardListItem extends StatelessWidget {
   final CardModel card;
@@ -92,7 +93,7 @@ class CardListItem extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF81C784), // Vert pastel
+                        color: AppColors.success,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
@@ -179,9 +180,9 @@ class CardListItem extends StatelessWidget {
   }
 
   Color _getStockColor(int stock) {
-    if (stock <= 3) return const Color(0xFFE57373); // Rouge pastel
-    if (stock <= 10) return const Color(0xFFFFB74D); // Orange pastel
-    return const Color(0xFF64B5F6); // Bleu pastel
+    if (stock <= 3) return AppColors.error; // Au lieu de Color(0xFFE57373)
+    if (stock <= 10) return AppColors.warning; // Au lieu de Color(0xFFFFB74D)
+    return AppColors.primary;
   }
 
   IconData _getStockIcon(int stock) {

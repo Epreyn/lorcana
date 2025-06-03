@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/card_controller.dart';
 import '../../../controllers/price_comparison_controller.dart';
+import '../../../themes/app_colors.dart';
 import '../widgets/price_comparison_widget.dart';
 import '../widgets/stock_indicator.dart';
 
@@ -103,9 +104,18 @@ class CardDetailView extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.green),
+                        color: AppColors.success.withOpacity(
+                          0.1,
+                        ), // Au lieu de Colors.green.withOpacity(0.1)
+                        borderRadius: BorderRadius.circular(
+                          16,
+                        ), // Au lieu de 12
+                        border: Border.all(
+                          color: AppColors.success.withOpacity(
+                            0.2,
+                          ), // Au lieu de Colors.green
+                          width: 1, // Au lieu de border direct
+                        ),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -148,8 +158,16 @@ class CardDetailView extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.primary.withOpacity(
+                          0.05,
+                        ), // Au lieu de Colors.grey[100]
+                        borderRadius: BorderRadius.circular(
+                          16,
+                        ), // Au lieu de 12
+                        border: Border.all(
+                          color: AppColors.primary.withOpacity(0.1),
+                          width: 1,
+                        ),
                       ),
                       child: Column(
                         children: [

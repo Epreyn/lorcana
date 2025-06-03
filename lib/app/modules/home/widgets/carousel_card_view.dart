@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math' as math;
 import '../../../data/models/card_model.dart';
+import '../../../themes/app_colors.dart';
 
 class CarouselCardView extends StatefulWidget {
   final List<CardModel> cards;
@@ -161,6 +162,7 @@ class _CarouselCardViewState extends State<CarouselCardView> {
     );
   }
 
+  // lib/app/modules/home/widgets/carousel_card_view.dart
   Widget _buildCard(CardModel card, bool isCurrent) {
     final isLiked = _likedCards[card.id] ?? false;
     final isInCart = _cartCards[card.id] ?? false;
@@ -170,35 +172,38 @@ class _CarouselCardViewState extends State<CarouselCardView> {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
         child: AspectRatio(
-          aspectRatio: 63 / 88, // Ratio Lorcana
+          aspectRatio: 63 / 88,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppColors.primary.withOpacity(0.1),
+                width: 2,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isCurrent ? 0.4 : 0.2),
-                  blurRadius: isCurrent ? 20 : 10,
+                  color: AppColors.primary.withOpacity(isCurrent ? 0.15 : 0.08),
+                  blurRadius: isCurrent ? 30 : 20,
                   offset: const Offset(0, 10),
-                  spreadRadius: isCurrent ? 2 : 0,
                 ),
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(18),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Image de la carte en plein
+                  // Image de la carte
                   Image.network(
                     card.imageUrl,
-                    fit: BoxFit.cover, // Remplit toute la carte
+                    fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        color: Colors.grey[800],
-                        child: const Center(
+                        color: AppColors.primary.withOpacity(0.1),
+                        child: Center(
                           child: Icon(
-                            Icons.image_not_supported,
-                            color: Colors.white54,
+                            Icons.image_not_supported_rounded,
+                            color: AppColors.primary.withOpacity(0.3),
                             size: 60,
                           ),
                         ),
@@ -206,24 +211,24 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                     },
                   ),
 
-                  // Overlay avec prix et actions en bas
+                  // Overlay avec infos en bas
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withOpacity(0.6),
-                            Colors.black.withOpacity(0.8),
-                          ],
-                        ),
-                      ),
+                      // decoration: BoxDecoration(
+                      //   gradient: LinearGradient(
+                      //     begin: Alignment.topCenter,
+                      //     end: Alignment.bottomCenter,
+                      //     colors: [
+                      //       Colors.transparent,
+                      //       Colors.white.withOpacity(0.7),
+                      //       Colors.white.withOpacity(0.9),
+                      //     ],
+                      //   ),
+                      // ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -231,18 +236,16 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
-                              vertical: 8,
+                              vertical: 10,
                             ),
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF6BCF7F), Color(0xFF4ECDC4)],
-                              ),
-                              borderRadius: BorderRadius.circular(25),
+                              color:
+                                  AppColors
+                                      .success, // Couleur pleine pour la visibilité
+                              borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(
-                                    0xFF6BCF7F,
-                                  ).withOpacity(0.3),
+                                  color: Colors.black.withOpacity(0.2),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),
@@ -252,8 +255,8 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                               '${card.lowestPrice.toStringAsFixed(2)} €',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
@@ -261,16 +264,13 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                           // Actions
                           Row(
                             children: [
-                              // Bouton Like
                               _buildActionButton(
                                 icon:
                                     isLiked
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                color:
-                                    isLiked
-                                        ? const Color(0xFFFF4757)
-                                        : Colors.white,
+                                        ? Icons.favorite_rounded
+                                        : Icons.favorite_border_rounded,
+                                color: AppColors.error,
+                                isActive: isLiked,
                                 onTap: () {
                                   setState(() {
                                     _likedCards[card.id] = !isLiked;
@@ -279,16 +279,13 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                                 },
                               ),
                               const SizedBox(width: 10),
-                              // Bouton Panier
                               _buildActionButton(
                                 icon:
                                     isInCart
                                         ? Icons.shopping_bag
                                         : Icons.shopping_bag_outlined,
-                                color:
-                                    isInCart
-                                        ? const Color(0xFF6BCF7F)
-                                        : Colors.white,
+                                color: AppColors.primary,
+                                isActive: isInCart,
                                 onTap: () {
                                   setState(() {
                                     _cartCards[card.id] = !isInCart;
@@ -303,7 +300,7 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                     ),
                   ),
 
-                  // Badge de stock si faible
+                  // Badge de stock
                   if (card.stockQuantity < 5)
                     Positioned(
                       top: 16,
@@ -311,21 +308,14 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
-                          vertical: 6,
+                          vertical: 8,
                         ),
                         decoration: BoxDecoration(
                           color:
                               card.stockQuantity == 0
-                                  ? Colors.red.withOpacity(0.9)
-                                  : Colors.orange.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                                  ? AppColors.error
+                                  : AppColors.warning,
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
                           card.stockQuantity == 0
@@ -334,7 +324,7 @@ class _CarouselCardViewState extends State<CarouselCardView> {
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -351,26 +341,20 @@ class _CarouselCardViewState extends State<CarouselCardView> {
   Widget _buildActionButton({
     required IconData icon,
     required Color color,
+    required bool isActive,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 44,
-        height: 44,
+        width: 42,
+        height: 42,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.15),
+          color: isActive ? color : Colors.white,
           shape: BoxShape.circle,
-          border: Border.all(color: color, width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: color.withOpacity(0.3), width: 2),
         ),
-        child: Icon(icon, color: color, size: 22),
+        child: Icon(icon, color: isActive ? Colors.white : color, size: 20),
       ),
     );
   }
