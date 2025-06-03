@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/home_controller.dart';
 import '../widgets/card_list_item.dart';
-import '../widgets/search_bar.dart';
+import '../widgets/serach_bar.dart' as search;
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -23,7 +23,7 @@ class HomeView extends StatelessWidget {
       ),
       body: Column(
         children: [
-          SearchBar(
+          search.SearchBar(
             onSearch: controller.updateSearchQuery,
             onFilterRarity: controller.filterByRarity,
             onFilterSet: controller.filterBySet,

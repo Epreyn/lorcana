@@ -1,3 +1,5 @@
+import 'price_model.dart';
+
 class CardModel {
   final String id;
   final String name;
